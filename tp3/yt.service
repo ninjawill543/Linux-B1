@@ -1,0 +1,9 @@
+[Unit]
+Description=Youtube video downloader
+
+[Service]
+ExecStart=/home/m4ul/Documents/ynov/linuxb1/tp3/srv/yt/yt-v2.sh
+User=m4ul
+
+[Install]
+WantedBy=multi-user.target
