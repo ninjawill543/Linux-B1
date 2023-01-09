@@ -46,7 +46,43 @@ tcp   LISTEN 0      4096            [::]:19999         [::]:*    users:(("netdat
 
 🌞 **Configurer Netdata pour qu'il vous envoie des alertes** 
 
+```
+[user1@db ~]$ cd /etc/netdata/
+[user1@db ~]$ ./edit-config health_alarm_notify.conf
+
+```
+```
+On met l'url du webhook discord dans le fichier health
+```
+
 
 🌞 **Vérifier que les alertes fonctionnent**
 
+```
+[user1@db netdata]$ sudo dnf install stress
+[user1@db netdata]$ stress --cpu 1
+stress: info: [5218] dispatching hogs: 1 cpu, 0 io, 0 vm, 0 hdd
+```
+```
+[user1@db netdata]$ cat health.d/cpu.conf | head -n 19
 
+# you can disable an alarm notification by setting the 'to' line to: silent
+
+ template: 10min_cpu_usage
+       on: system.cpu
+    class: Utilization
+     type: System
+component: CPU
+       os: linux
+    hosts: *
+   lookup: average -10m unaligned of user,system,softirq,irq,guest
+    units: %
+    every: 1min
+     warn: $this > 10
+     crit: $this > (($status == $CRITICAL) ? (85) : (95))
+    delay: down 15m multiplier 1.5 max 1h
+     info: average CPU utilization over the last 10 minutes (excluding iowait, nice and steal)
+       to: sysadmin
+```
+
+![](discord.png)
